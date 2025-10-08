@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Good Landing Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+<body class="bg-gray-50">
+  <div id="root"></div>
+  <canvas id="confettiCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-50"></canvas>
+
+  <script>
+    const { useState, useEffect } = React;
+    const { motion } = window['framer-motion'];
+
+    function LiveGoodLandingPage() {
+      const affiliateLink = "https://livegoodtour.com/Hilush290674";
+
+      // Countdown Timer
+      const [timeLeft, setTimeLeft] = useState(() => {
+        const deadline = new Date(); deadline.setHours(deadline.getHours() + 24);
+        return { deadline };
+      });
+      const [timer, setTimer] = useState({hours: "00", minutes: "00", seconds: "00"});
+      useEffect(() => {
+        const interval = setInterval(() => {
+          const diff = timeLeft.deadline - new Date();
+          if(diff>0){
+            setTimer({
+              hours: String(Math.floor((diff / (1000*60*60))%24)).padStart(2,'0'),
+              minutes: String(Math.floor((diff / (1000*60))%60)).padStart(2,'0'),
+              seconds: String(Math.floor((diff/1000)%60)).padStart(2,'0')
+            });
+          }
+        },1000);
+        return () => clearInterval(interval);
+      }, [timeLeft]);
+
+      // Member counter
+      const [members, setMembers] = useState(1200);
+      useEffect(() => {
+        const interval = setInterval(()=>{setMembers(prev=>prev+Math.floor(Math.random()*2+1))}, 3000);
+        return ()=>clearInterval(interval);
+      },[]);
+
+      // Today joins for social proof
+      const [todayJoins, setTodayJoins] = useState(0);
+      useEffect(() => {
+        const interval = setInterval(()=>{setTodayJoins(prev=>prev+1)}, 4000);
+        return ()=>clearInterval(interval);
+      },[]);
+
+      // Email modal
+      const [modalOpen,setModalOpen]=useState(false);
+      const [email,setEmail]=useState("");
+      useEffect(()=>{const t=setTimeout(()=>setModalOpen(true),5000); return()=>clearTimeout(t)},[]);
+
+      return React.createElement("div",{className:"min-h-screen flex flex-col items-center relative"},
+        // Email Modal
+        modalOpen && React.createElement(motion.div,{
+          className:"fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50",
+          initial:{opacity:0}, animate:{opacity:1}
+        },
+          React.createElement(motion.div,{
+            className:"bg-white p-6 rounded-xl max-w-md w-full text-center",
+            initial:{scale:0.5}, animate:{scale:1}
+          },
+            React.createElement("h2",{className:"text-2xl font-bold mb-4"},"Get Free Updates!"),
+            React.createElement("p",{className:"mb-4"},"Subscribe to get tips to maximize your earnings."),
+            React.createElement("form",{onSubmit:e=>{e.preventDefault();window.open(affiliateLink,"_blank")}, className:"flex flex-col gap-4"},
+              React.createElement("input",{type:"email",required:true,placeholder:"Enter your email",value:email,onChange:e=>setEmail(e.target.value),className:"p-2 border rounded"}),
+              React.createElement("button",{type:"submit",className:"bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700 transition"},"Join Now")
+            ),
+            React.createElement("button",{onClick:()=>setModalOpen(false),className:"mt-4 text-gray-500 hover:text-gray-800"},"Close")
+          )
+        ),
+
+        // Sticky Join Now
+        React.createElement(motion.a,{href:affiliateLink,target:"_blank",rel:"noopener noreferrer",className:"fixed bottom-6 right-6 bg-green-600 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-green-700 transition z-50",whileHover:{scale:1.1},whileTap:{scale:0.95}},"Join Now"),
+
+        // Header
+        React.createElement("header",{className:"w-full bg-green-600 text-white py-8 shadow-md"},
+          React.createElement(motion.h1,{className:"text-4xl font-bold text-center",initial:{y:-50,opacity:0},animate:{y:0,opacity:1},transition:{duration:0.8}},"Join Live Good Today!"),
+          React.createElement(motion.p,{className:"text-center mt-2 text-lg",initial:{y:-20,opacity:0},animate:{y:0,opacity:1},transition:{duration:0.8,delay:0.3}},"Unlock passive income for just $9.95/month")
+        ),
+
+        // Hero Section
+        React.createElement("section",{className:"max-w-4xl text-center mt-12 px-6"},
+          React.createElement(motion.h2,{className:"text-3xl font-semibold mb-4",initial:{x:-50,opacity:0},animate:{x:0,opacity:1},transition:{duration:0.8}},"Earn Passive Income From Home"),
+          React.createElement(motion.p,{className:"text-gray-700 mb-6",initial:{x:50,opacity:0},animate:{x:0,opacity:1},transition:{duration:0.8,delay:0.2}},"Join thousands of members already earning monthly. Limited spots available!"),
+          React.createElement(motion.div,{className:"flex justify-center gap-4 mb-6 text-white font-bold text-lg",initial:{scale:0},animate:{scale:1},transition:{duration:0.8}},
+            React.createElement("div",{className:"bg-red-600 px-4 py-2 rounded"},timer.hours+"h"),
+            React.createElement("div",{className:"bg-red-600 px-4 py-2 rounded"},timer.minutes+"m"),
+            React.createElement("div",{className:"bg-red-600 px-4 py-2 rounded"},timer.seconds+"s")
+          )
+        ),
+
+        // Signup Section
+        React.createElement("section",{id:"signup",className:"text-center mt-16 mb-16 px-6"},
+          React.createElement(motion.h2,{className:"text-3xl font-semibold mb-4",initial:{y:50,opacity:0},animate:{y:0,opacity:1},transition:{duration:0.8}},"Ready to Start Earning?"),
+          React.createElement(motion.p,{className:"text-gray-700 mb-6",initial:{opacity:0},animate:{opacity:1},transition:{duration:0.8,delay:0.2}},"Take control of your income for just $9.95/month. Click below to join instantly!"),
+          React.createElement(motion.a,{href:affiliateLink,target:"_blank",rel:"noopener noreferrer",className:"bg-green-600 text-white px-8 py-4 rounded-lg font-bold shadow-lg hover:bg-green-700 transition duration-300 inline-block",whileHover:{scale:1.05},whileTap:{scale:0.95}},"Join Live Good Now")
+        ),
+
+        // Social Proof Bar
+        React.createElement(motion.div,{className:"fixed bottom-0 left-0 w-full bg-green-600 text-white py-2 text-center font-bold z-40 cursor-pointer",initial:{y:50,opacity:0},animate:{y:0,opacity:1},transition:{duration:0.8},onClick:()=>window.open(affiliateLink,"_blank")},
+          "Join ", React.createElement("span",{className:"font-extrabold"},members+todayJoins)," people today!"
+        ),
+
+        // Footer
+        React.createElement("footer",{className:"w-full bg-gray-200 text-gray-700 py-6 text-center mt-16"},"\u00A9 ",new Date().getFullYear()," Live Good. All rights reserved.")
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(LiveGoodLandingPage));
+
+    // ===== Optimized Confetti =====
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const confettiParticles = [];
+
+    function createConfetti(x,y){
+      const colors=["#F87171","#34D399","#60A5FA","#FBBF24","#A78BFA"];
+      for(let i=0;i<15;i++){
+        confettiParticles.push({x,y,size:Math.random()5+3,color:colors[Math.floor(Math.random()*colors.length)],speedX:(Math.random()-0.5)*4,speedY:Math.random()-4-1,gravity:0.25,alpha:1,decay:Math.random()*0.015+0.008});
+      }
+    }
+
+    function updateConfetti(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for(let i=confettiParticles.length-1;i>=0;i--){
+        const p=confettiParticles[i];
+        p.x+=p.speedX; p.y+=p.speedY; p.speedY+=p.gravity; p.alpha-=p.decay;
+        if(p.alpha<=0) confettiParticles.splice(i,1);
+        else { ctx.fillStyle=p.color; ctx.globalAlpha=p.alpha; ctx.fillRect(p.x,p.y,p.size,p.size); }
+      }
+      ctx.globalAlpha=1; requestAnimationFrame(updateConfetti);
+    }
+    updateConfetti();
+
+    let prevJoins=0;
+    setInterval(()=>{
+      const socialProofValue=document.querySelector("#root span.font-extrabold");
+      if(!socialProofValue) return;
+      const currentValue=parseInt(socialProofValue.textContent);
+      if(currentValue>prevJoins) createConfetti(window.innerWidth/2,50);
+      prevJoins=currentValue;
+    },1000);
+
+    window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+  </script>
+</body>
+</html>
